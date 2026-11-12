@@ -1,0 +1,31 @@
+<%@ page import="com.taskpro.util.HtmlUtil,com.taskpro.util.CsrfUtil" %>
+<%
+    String base = request.getContextPath();
+    boolean isStudent = session.getAttribute("studentId") instanceof Long;
+    boolean isAdmin = session.getAttribute("adminId") instanceof Long;
+    String appName = getServletContext().getInitParameter("appName");
+%>
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title><%= HtmlUtil.escape(appName) %></title>
+<link rel="stylesheet" href="<%= base %>/css/style.css">
+</head><body>
+<header class="site-header"><div class="container nav">
+<a href="<%= base %>/index.html" class="brand"><span class="brand-icon">&lt;/&gt;</span><span>task<span class="accent">pro</span></span><small>CODEQUEST</small></a>
+<nav class="nav-links" aria-label="Primary navigation">
+<a href="<%= base %>/index.html">Home</a>
+<a href="<%= base %>/leaderboard">Leaderboard</a>
+<% if(isStudent) { %>
+<a href="<%= base %>/dashboard">Dashboard</a><a href="<%= base %>/missions">Missions</a>
+<form class="inline-form" action="<%= base %>/logout" method="post"><input type="hidden" name="csrf" value="<%= CsrfUtil.token(request) %>"><button type="submit" class="nav-button">Logout</button></form>
+<% } else if(isAdmin) { %>
+<a href="<%= base %>/admin/dashboard">Admin</a><a href="<%= base %>/admin/questions">Questions</a>
+<form class="inline-form" action="<%= base %>/admin/logout" method="post"><input type="hidden" name="csrf" value="<%= CsrfUtil.token(request) %>"><button type="submit" class="nav-button">Logout</button></form>
+<% } else { %>
+<a href="<%= base %>/register">Register</a><a href="<%= base %>/login">Student Login</a><a href="<%= base %>/admin/login" class="nav-admin">Admin</a>
+<% } %>
+</nav></div></header>
+<main class="container page-content">
+<% if(request.getAttribute("error") != null) { %><div class="alert alert-error" role="alert"><%= HtmlUtil.escape(request.getAttribute("error")) %></div><% } %>
+<% if(request.getAttribute("success") != null) { %><div class="alert alert-success" role="status"><%= HtmlUtil.escape(request.getAttribute("success")) %></div><% } %>
